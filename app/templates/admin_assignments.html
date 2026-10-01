@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Назначения — портал охраны труда{% endblock %}
+{% block content %}
+<div class="page-header d-print-none mb-4">
+  <div class="page-pretitle">Администрирование</div>
+  <h2 class="page-title">Назначение обучения</h2>
+  <div class="text-secondary mt-1">Выберите сотрудника, учебный курс и срок прохождения.</div>
+</div>
+
+<div class="row row-cards mb-4">
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header"><h3 class="card-title">Новое назначение</h3></div>
+      <div class="card-body">
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Сотрудник</label>
+              <select class="form-select" name="user_id" required>
+                <option value="">Выберите сотрудника</option>
+                {% for u in employees %}<option value="{{ u['id'] }}">{{ u['full_name'] }} — {{ u['department'] }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Курс</label>
+              <select class="form-select" name="course_id" required>
+                <option value="">Выберите курс</option>
+                {% for c in courses %}<option value="{{ c['id'] }}">{{ c['title'] }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Срок прохождения</label>
+              <input class="form-control" type="date" name="due_date">
+            </div>
+            <div class="col-12"><button class="btn btn-success" type="submit">Назначить обучение</button></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card h-100 bg-green-lt border-green-subtle">
+      <div class="card-body">
+        <div class="page-pretitle text-green">Как работает назначение</div>
+        <h3 class="card-title mt-2">Контроль прохождения</h3>
+        <div class="text-secondary">
+          После назначения курс появляется в личном кабинете сотрудника. Итоговый тест доступен после изучения всех разделов, а результаты и количество попыток фиксируются автоматически.
+        </div>
+        <div class="mt-4 d-flex flex-column gap-2 small">
+          <div><span class="step-dot">1</span> Назначение курса и срока</div>
+          <div><span class="step-dot">2</span> Изучение учебных разделов</div>
+          <div><span class="step-dot">3</span> Тестирование и фиксация результата</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h3 class="card-title">Все назначения</h3></div>
+  <div class="table-responsive">
+    <table class="table table-vcenter card-table table-hover">
+      <thead><tr><th>Сотрудник</th><th>Подразделение</th><th>Курс</th><th>Статус</th><th>Срок</th><th class="text-end">Результат</th></tr></thead>
+      <tbody>
+      {% for r in assignments %}
+        <tr>
+          <td class="fw-semibold">{{ r['full_name'] }}</td>
+          <td class="text-secondary">{{ r['department'] }}</td>
+          <td>{{ r['title'] }}</td>
+          <td><span class="badge {{ {'assigned':'bg-secondary-lt text-secondary','in_progress':'bg-yellow-lt text-yellow','completed':'bg-green-lt text-green','overdue':'bg-red-lt text-red'}[r['status']] }}">{{ {'assigned':'Назначено','in_progress':'В процессе','completed':'Завершено','overdue':'Просрочено'}[r['status']] }}</span></td>
+          <td class="text-secondary">{{ r['due_date'] or '—' }}</td>
+          <td class="text-end fw-semibold">{{ (r['best_score'] ~ '%') if r['best_score'] is not none else '—' }}</td>
+        </tr>
+      {% else %}<tr><td colspan="6" class="text-center text-secondary py-5">Назначений пока нет.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Результат тестирования — портал охраны труда{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-xl-9">
+    <div class="card result-hero-pro {{ 'result-pass' if passed else 'result-fail' }} mb-4">
+      <div class="card-body p-4 p-md-5">
+        <div class="row align-items-center g-4">
+          <div class="col-auto"><div class="result-score-pro">{{ score }}<span>%</span></div></div>
+          <div class="col">
+            <div class="page-pretitle">Результат тестирования</div>
+            <h2 class="mt-2 mb-2">{{ 'Тестирование пройдено' if passed else 'Тестирование не пройдено' }}</h2>
+            <div class="text-secondary">{{ assignment['title'] }}. Требуемый результат — {{ assignment['pass_percent'] }}%.</div>
+          </div>
+          <div class="col-md-auto">
+            {% if passed %}<span class="badge bg-green-lt text-green fs-5">Зачтено</span>{% else %}<span class="badge bg-red-lt text-red fs-5">Требуется повторная попытка</span>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <a class="btn btn-outline-secondary" href="{{ url_for('main.training', assignment_id=assignment['id']) }}">Вернуться к курсу</a>
+      {% if not passed %}<a class="btn btn-success" href="{{ url_for('main.take_test', assignment_id=assignment['id']) }}">Пройти тест еще раз</a>{% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3 class="card-title">Разбор ответов</h3></div>
+      <div class="list-group list-group-flush">
+      {% for q in questions %}
+        {% set d = detailed[loop.index0] %}
+        <div class="list-group-item py-3">
+          <div class="d-flex gap-3">
+            <span class="review-mark {{ 'is-ok' if d['is_correct'] else 'is-bad' }}">{{ '✓' if d['is_correct'] else '×' }}</span>
+            <div>
+              <div class="fw-semibold">{{ q['text'] }}</div>
+              <div class="text-secondary small mt-1">Ваш ответ: {{ d['answer'] or 'не выбран' }}{% if not d['is_correct'] %} · Правильный ответ: {{ d['correct'] }}{% endif %}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

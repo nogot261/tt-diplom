@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Обзор — портал охраны труда{% endblock %}
+{% block content %}
+<div class="page-header d-print-none mb-4">
+  <div class="row align-items-center g-3">
+    <div class="col">
+      <div class="page-pretitle">Администрирование</div>
+      <h2 class="page-title">Контроль обучения сотрудников</h2>
+      <div class="text-secondary mt-1">Сводная информация по назначениям, срокам и результатам тестирования.</div>
+    </div>
+    <div class="col-auto ms-auto">
+      <a class="btn btn-success" href="{{ url_for('main.admin_assignments') }}">Назначить обучение</a>
+    </div>
+  </div>
+</div>
+
+<div class="row row-deck row-cards mb-4">
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card-pro">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="stat-icon bg-green-lt text-green">С</span>
+        <div><div class="text-secondary small">Сотрудников</div><div class="h2 mb-0">{{ stats['employees'] }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card-pro">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="stat-icon bg-blue-lt text-blue">Н</span>
+        <div><div class="text-secondary small">Назначений</div><div class="h2 mb-0">{{ stats['assignments'] }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card-pro">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="stat-icon bg-green-lt text-green">✓</span>
+        <div><div class="text-secondary small">Завершено</div><div class="h2 mb-0">{{ stats['completed'] }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="card stat-card-pro">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="stat-icon bg-red-lt text-red">!</span>
+        <div><div class="text-secondary small">Просрочено</div><div class="h2 mb-0 text-danger">{{ stats['overdue'] }}</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex align-items-center">
+    <div>
+      <h3 class="card-title mb-0">Последние назначения</h3>
+      <div class="text-secondary small mt-1">Актуальные статусы прохождения курсов</div>
+    </div>
+    <div class="ms-auto"><a class="btn btn-outline-secondary btn-sm" href="{{ url_for('main.admin_report') }}">Открыть полный отчет</a></div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-vcenter card-table table-hover">
+      <thead><tr><th>Сотрудник</th><th>Курс</th><th>Статус</th><th>Срок</th><th class="text-end">Лучший результат</th></tr></thead>
+      <tbody>
+      {% for r in latest %}
+        <tr>
+          <td><div class="fw-semibold">{{ r['full_name'] }}</div></td>
+          <td class="text-secondary">{{ r['title'] }}</td>
+          <td><span class="badge {{ {'assigned':'bg-secondary-lt text-secondary','in_progress':'bg-yellow-lt text-yellow','completed':'bg-green-lt text-green','overdue':'bg-red-lt text-red'}[r['status']] }}">{{ {'assigned':'Назначено','in_progress':'В процессе','completed':'Завершено','overdue':'Просрочено'}[r['status']] }}</span></td>
+          <td class="text-secondary">{{ r['due_date'] or '—' }}</td>
+          <td class="text-end fw-semibold">{{ (r['best_score'] ~ '%') if r['best_score'] is not none else '—' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-center text-secondary py-5">Назначений пока нет.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

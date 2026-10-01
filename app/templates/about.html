@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}О системе — портал охраны труда{% endblock %}
+{% block content %}
+<div class="page-header mb-4">
+  <div class="page-pretitle">Информационный портал</div>
+  <h2 class="page-title">Возможности системы</h2>
+  <div class="text-secondary mt-1">Портал объединяет обучение сотрудников, проверку знаний и контроль результатов в едином веб-интерфейсе.</div>
+</div>
+
+<div class="row row-cards mb-4">
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><span class="feature-number">01</span><h3 class="mt-3">Для сотрудника</h3><p class="text-secondary">Личный кабинет, назначенные курсы, последовательное изучение разделов, тестирование и история результатов.</p></div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><span class="feature-number">02</span><h3 class="mt-3">Для специалиста</h3><p class="text-secondary">Назначение обучения, контроль сроков, просмотр статусов, результатов и количества попыток.</p></div></div></div>
+  <div class="col-md-4"><div class="card h-100"><div class="card-body"><span class="feature-number">03</span><h3 class="mt-3">Для организации</h3><p class="text-secondary">Единый учет прохождения обучения, централизованная отчетность и снижение доли ручных операций.</p></div></div></div>
+</div>
+
+<div class="card">
+  <div class="card-body p-4">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-8"><h3 class="mb-2">Работа через обычный браузер</h3><p class="text-secondary mb-0">Пользовательский интерфейс не требует установки клиентского приложения и может использоваться на рабочих станциях с современным браузером.</p></div>
+      <div class="col-lg-4 text-lg-end"><a class="btn btn-success" href="{{ url_for('main.login') }}">Перейти к системе</a></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

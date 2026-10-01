@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Отчет — портал охраны труда{% endblock %}
+{% block content %}
+<div class="page-header d-print-none mb-4">
+  <div class="row align-items-center g-3">
+    <div class="col">
+      <div class="page-pretitle">Отчетность</div>
+      <h2 class="page-title">Результаты обучения</h2>
+      <div class="text-secondary mt-1">Сводная таблица по сотрудникам, срокам и результатам тестирования.</div>
+    </div>
+    <div class="col-auto ms-auto"><a class="btn btn-outline-secondary" href="{{ url_for('main.admin_report_csv') }}">Скачать CSV</a></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header d-flex align-items-center">
+    <h3 class="card-title mb-0">Сводный отчет</h3>
+    <span class="badge bg-secondary-lt text-secondary ms-2">{{ rows|length }} записей</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-vcenter card-table table-hover">
+      <thead><tr><th>Сотрудник</th><th>Подразделение</th><th>Должность</th><th>Курс</th><th>Статус</th><th>Срок</th><th class="text-end">Результат</th><th class="text-end">Попыток</th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td class="fw-semibold">{{ r['full_name'] }}</td><td class="text-secondary">{{ r['department'] }}</td><td class="text-secondary">{{ r['position'] }}</td><td>{{ r['title'] }}</td>
+          <td><span class="badge {{ {'assigned':'bg-secondary-lt text-secondary','in_progress':'bg-yellow-lt text-yellow','completed':'bg-green-lt text-green','overdue':'bg-red-lt text-red'}[r['status']] }}">{{ {'assigned':'Назначено','in_progress':'В процессе','completed':'Завершено','overdue':'Просрочено'}[r['status']] }}</span></td>
+          <td class="text-secondary">{{ r['due_date'] or '—' }}</td><td class="text-end fw-semibold">{{ (r['best_score'] ~ '%') if r['best_score'] is not none else '—' }}</td><td class="text-end">{{ r['attempts'] }}</td>
+        </tr>
+      {% else %}<tr><td colspan="8" class="text-center text-secondary py-5">Нет данных для отчета.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{% block title %}Портал охраны труда{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.5.1/dist/css/tabler.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.5.1/dist/css/tabler.min.css"></noscript>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="layout-fluid bg-body-tertiary">
+<div class="page">
+  <header class="navbar navbar-expand-md navbar-light bg-white border-bottom d-print-none app-navbar">
+    <div class="container-xl">
+      <a class="navbar-brand navbar-brand-autodark app-brand" href="{{ url_for('main.dashboard') if g.user else url_for('main.index') }}">
+        <span class="app-brand-mark">ОТ</span>
+        <span class="app-brand-copy">
+          <span class="app-brand-title">Охрана труда</span>
+          <span class="app-brand-subtitle">обучение и проверка знаний</span>
+        </span>
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbar-menu">
+        <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+          <ul class="navbar-nav app-main-nav">
+            {% if g.user %}
+              {% if g.user['role'] == 'admin' %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_dashboard') }}"><span class="nav-link-title">Обзор</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_assignments') }}"><span class="nav-link-title">Назначения</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.admin_report') }}"><span class="nav-link-title">Отчет</span></a></li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('main.dashboard') }}"><span class="nav-link-title">Мое обучение</span></a></li>
+              {% endif %}
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}"><span class="nav-link-title">О системе</span></a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      {% if g.user %}
+      <nav class="navbar-nav flex-row order-md-last ms-auto app-user-nav">
+        <div class="nav-item d-flex align-items-center gap-2">
+          <span class="avatar avatar-sm app-avatar">{{ g.user['full_name'][:1] }}</span>
+          <div class="d-none d-lg-block lh-sm text-end">
+            <div class="fw-semibold app-user-name">{{ g.user['full_name'].split()[:2]|join(' ') }}</div>
+            <div class="text-secondary small">{{ 'Администратор' if g.user['role'] == 'admin' else 'Сотрудник' }}</div>
+          </div>
+          <form method="post" action="{{ url_for('main.logout') }}" class="m-0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="btn btn-outline-secondary btn-sm ms-2" type="submit">Выйти</button>
+          </form>
+        </div>
+      </nav>
+      {% endif %}
+
+      {% if not g.user %}
+      <div class="ms-auto">
+        <a class="btn btn-success" href="{{ url_for('main.login') }}">Войти</a>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+    <div class="page-body">
+      <div class="container-xl">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="app-flashes">
+              {% for category, message in messages %}
+                <div class="alert {{ 'alert-danger' if category == 'error' else 'alert-success' }}" role="alert">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+
+    <footer class="footer footer-transparent d-print-none">
+      <div class="container-xl text-center text-secondary small py-3">
+        Информационный портал для обучения сотрудников и контроля знаний по охране труда
+      </div>
+    </footer>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Ошибка{% endblock %}
+{% block content %}
+<div class="empty-state-pro my-5">
+  <div class="error-code-pro">{{ code }}</div>
+  <h2>{{ message }}</h2>
+  <p class="text-secondary">Вернитесь на предыдущую страницу или откройте личный кабинет.</p>
+  <a class="btn btn-success" href="{{ url_for('main.dashboard') if g.user else url_for('main.index') }}">На главную</a>
+</div>
+{% endblock %}

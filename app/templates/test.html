@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Тестирование — {{ assignment['title'] }}{% endblock %}
+{% block content %}
+<div class="page-header d-print-none mb-4">
+  <div class="page-pretitle"><a href="{{ url_for('main.training', assignment_id=assignment['id']) }}">{{ assignment['title'] }}</a> / итоговый тест</div>
+  <h2 class="page-title">Проверка знаний</h2>
+  <div class="text-secondary mt-1">Выберите один вариант ответа для каждого вопроса. Для успешного прохождения необходимо набрать не менее {{ assignment['pass_percent'] }}%.</div>
+</div>
+
+<form method="post" class="test-form-pro">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div class="row row-cards">
+    <div class="col-lg-8">
+      {% for q in questions %}
+      <div class="card mb-3 question-card-pro">
+        <div class="card-body">
+          <div class="d-flex gap-3 align-items-start mb-3"><span class="question-number">{{ loop.index }}</span><h3 class="mb-0 fs-4">{{ q['text'] }}</h3></div>
+          <div class="d-grid gap-2">
+            {% for key, label in [('A', q['option_a']), ('B', q['option_b']), ('C', q['option_c']), ('D', q['option_d'])] %}
+            {% if label %}
+            <label class="answer-option-pro">
+              <input type="radio" name="q_{{ q['id'] }}" value="{{ key }}" required>
+              <span class="answer-letter">{{ key }}</span><span>{{ label }}</span>
+            </label>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="col-lg-4">
+      <div class="card sticky-summary-pro">
+        <div class="card-body">
+          <div class="page-pretitle">Итоговый тест</div>
+          <h3 class="mt-2 mb-3">{{ assignment['title'] }}</h3>
+          <div class="datagrid">
+            <div class="datagrid-item"><div class="datagrid-title">Вопросов</div><div class="datagrid-content">{{ questions|length }}</div></div>
+            <div class="datagrid-item"><div class="datagrid-title">Порог</div><div class="datagrid-content">{{ assignment['pass_percent'] }}%</div></div>
+          </div>
+          <div class="alert alert-info mt-4 mb-3">После отправки результат будет рассчитан и сохранен автоматически.</div>
+          <button class="btn btn-success w-100" type="submit">Завершить тест</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
